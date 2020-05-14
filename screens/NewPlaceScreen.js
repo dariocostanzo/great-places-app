@@ -7,11 +7,15 @@ import {
   TextInput,
   StyleSheet
 } from 'react-native';
+import { useDispatch } from 'react-redux';
 
 import Colors from '../constants/Colors';
+import * as placesActions from '../store/places-action';
 
 const NewPlaceScreen = props => {
   const [titleValue, setTitleValue] = useState('');
+
+  const dispatch = useDispatch();
 
   const titleChangeHandler = text => {
     setTitleValue(text);
@@ -19,6 +23,9 @@ const NewPlaceScreen = props => {
 
   const savePlaceHandler = () => {
     //install Redux to save the place added by the user
+    // dispatch forward the titleValue
+    dispatch(placesActions.addPlace(titleValue));
+    props.navigation.goBack();
   };
 
   return (
