@@ -7,7 +7,7 @@ import * as Permissions from 'expo-permissions';
 import Colors from '../constants/Colors';
 
 const ImgPicker = props => {
-  const [pickedIamge, setPickedIamge] = useState();
+  const [pickedIamge, setPickedImage] = useState();
 
   const verifyPermissions = async () => {
     const result = await Permissions.askAsync(Permissions.CAMERA);
@@ -21,20 +21,21 @@ const ImgPicker = props => {
     }
     return true;
   };
+
   const takeImageHandler = async () => {
     const hasPermission = await verifyPermissions();
     if (!hasPermission) {
       return;
     }
-    const Image = await ImagePicker.launchCameraAsync({
+    const image = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
       aspect: [16, 9],
       quality: 0.5
     });
 
-    setPickedIamge(Image.uri);
+    setPickedImage(image.uri);
+    props.onImageTaken(image.uri);
   };
-
   return (
     <View style={styles.imagePicker}>
       <View style={styles.imagePreview}>
