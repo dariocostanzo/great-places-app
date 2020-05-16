@@ -10,7 +10,7 @@ import {
 import { useDispatch } from 'react-redux';
 
 import Colors from '../constants/Colors';
-import * as placesActions from '../store/places-action';
+import * as placesActions from '../store/places-actions';
 import ImagePicker from '../components/ImagePicker';
 
 const NewPlaceScreen = props => {
