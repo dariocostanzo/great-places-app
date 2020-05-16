@@ -1,16 +1,23 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, Platform, FlatList } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 import HeaderButton from '../components/HeaderButton';
 import PlaceItem from '../components/PlaceItem';
+import * as placesActions from '../store/places-actions';
 
 const PlacesListScreen = props => {
   const places = useSelector(state => state.places.places);
   // I use state.place because I use "places" in App.js rootReducer
   // that takes use to the slices managed with the places-reducer
   // where we have another places key
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(placesActions.loadPlaces());
+  }, [dispatch]);
+
   return (
     <FlatList
       data={places}

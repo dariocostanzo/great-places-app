@@ -1,20 +1,19 @@
 import React, { useState } from 'react';
-import { View, Button, Text, StyleSheet, Image, Alert } from 'react-native';
+import { View, Button, Image, Text, StyleSheet, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-
 import * as Permissions from 'expo-permissions';
 
 import Colors from '../constants/Colors';
 
 const ImgPicker = props => {
-  const [pickedIamge, setPickedImage] = useState();
+  const [pickedImage, setPickedImage] = useState();
 
   const verifyPermissions = async () => {
-    const result = await Permissions.askAsync(Permissions.CAMERA);
-    if (result.status != 'granted') {
+    const result = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+    if (result.status !== 'granted') {
       Alert.alert(
-        'Insufficient permissions',
-        'You need to grant camera permissions to use this app',
+        'Insufficient permissions!',
+        'You need to grant camera permissions to use this app.',
         [{ text: 'Okay' }]
       );
       return false;
@@ -36,13 +35,14 @@ const ImgPicker = props => {
     setPickedImage(image.uri);
     props.onImageTaken(image.uri);
   };
+
   return (
     <View style={styles.imagePicker}>
       <View style={styles.imagePreview}>
-        {!pickedIamge ? (
+        {!pickedImage ? (
           <Text>No image picked yet.</Text>
         ) : (
-          <Image style={styles.image} source={{ uri: pickedIamge }} />
+          <Image style={styles.image} source={{ uri: pickedImage }} />
         )}
       </View>
       <Button
@@ -56,7 +56,8 @@ const ImgPicker = props => {
 
 const styles = StyleSheet.create({
   imagePicker: {
-    alignItems: 'center'
+    alignItems: 'center',
+    marginBottom: 15
   },
   imagePreview: {
     width: '100%',
