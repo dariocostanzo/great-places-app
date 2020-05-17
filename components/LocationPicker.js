@@ -7,7 +7,6 @@ import {
   Alert,
   StyleSheet
 } from 'react-native';
-
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 
@@ -20,11 +19,14 @@ const LocationPicker = props => {
 
   const mapPickedLocation = props.navigation.getParam('pickedLocation');
 
+  const { onLocationPicked } = props;
+
   useEffect(() => {
     if (mapPickedLocation) {
       setPickedLocation(mapPickedLocation);
+      onLocationPicked(mapPickedLocation);
     }
-  }, [mapPickedLocation]);
+  }, [mapPickedLocation, onLocationPicked]);
 
   const verifyPermissions = async () => {
     const result = await Permissions.askAsync(Permissions.LOCATION);
@@ -38,23 +40,32 @@ const LocationPicker = props => {
     }
     return true;
   };
+
   const getLocationHandler = async () => {
     const hasPermission = await verifyPermissions();
     if (!hasPermission) {
       return;
     }
+
     try {
       setIsFetching(true);
       const location = await Location.getCurrentPositionAsync({
-        timeInterval: 5000
+        timeout: 5000
       });
-      console.log(location);
       setPickedLocation({
         lat: location.coords.latitude,
         lng: location.coords.longitude
       });
+      props.onLocationPicked({
+        lat: location.coords.latitude,
+        lng: location.coords.longitude
+      });
     } catch (err) {
-      Alert.alert('Could not fetch location', 'Try later', [{ text: OK }]);
+      Alert.alert(
+        'Could not fetch location!',
+        'Please try again later or pick a location on the map.',
+        [{ text: 'Okay' }]
+      );
     }
     setIsFetching(false);
   };
@@ -62,6 +73,7 @@ const LocationPicker = props => {
   const pickOnMapHandler = () => {
     props.navigation.navigate('Map');
   };
+
   return (
     <View style={styles.locationPicker}>
       <MapPreview
@@ -70,7 +82,7 @@ const LocationPicker = props => {
         onPress={pickOnMapHandler}
       >
         {isFetching ? (
-          <ActivityIndicator size='large' />
+          <ActivityIndicator size='large' color={Colors.primary} />
         ) : (
           <Text>No location chosen yet!</Text>
         )}
@@ -80,12 +92,12 @@ const LocationPicker = props => {
           title='Get User Location'
           color={Colors.primary}
           onPress={getLocationHandler}
-        ></Button>
+        />
         <Button
           title='Pick on Map'
           color={Colors.primary}
           onPress={pickOnMapHandler}
-        ></Button>
+        />
       </View>
     </View>
   );
@@ -96,7 +108,7 @@ const styles = StyleSheet.create({
     marginBottom: 15
   },
   mapPreview: {
-    marginBottom: 15,
+    marginBottom: 10,
     width: '100%',
     height: 150,
     borderColor: '#ccc',
